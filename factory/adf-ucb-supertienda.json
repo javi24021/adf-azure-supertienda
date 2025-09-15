@@ -1,0 +1,9 @@
+{
+	"name": "adf-ucb-supertienda",
+	"location": "canadacentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "e8a8a261-68e6-474f-b35a-61d9bfb9eb34",
+		"tenantId": "cc28633f-12b8-46cb-bc15-951dae239b4d"
+	}
+}
