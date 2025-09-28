@@ -13,40 +13,40 @@
 		"schema": [
 			{
 				"name": "EmployeeID",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "FirstName",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "LastName",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "Department",
-				"type": "varchar"
-			},
-			{
-				"name": "BirthDay",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "Gender",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "Salary",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "ManagerID",
-				"type": "varchar"
+				"type": "nvarchar"
+			},
+			{
+				"name": "BirthDate",
+				"type": "date"
 			}
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "Employees"
+			"table": "employees"
 		}
 	}
 }
