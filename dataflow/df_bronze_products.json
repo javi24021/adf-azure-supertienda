@@ -1,15 +1,15 @@
 {
-	"name": "df_guardarArchivo",
+	"name": "df_bronze_products",
 	"properties": {
 		"folder": {
-			"name": "SILVER"
+			"name": "BRONZE"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ds_sql_silver_products",
+						"referenceName": "Products_csv",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -18,34 +18,24 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "Products_csv",
+						"referenceName": "ds_sql_bronze_products",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
 				}
 			],
-			"transformations": [
-				{
-					"name": "cast1"
-				}
-			],
+			"transformations": [],
 			"scriptLines": [
 				"source(output(",
-				"          ProductID as integer,",
+				"          ProductID as string,",
 				"          Product as string,",
 				"          Category as string,",
-				"          Price as integer",
+				"          Price as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source1",
-				"source1 cast(output(",
-				"          ProductID as integer,",
-				"          Price as integer",
-				"     ),",
-				"     errors: true) ~> cast1",
-				"cast1 sink(allowSchemaDrift: true,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ProductID as string,",
@@ -53,16 +43,20 @@
 				"          Category as string,",
 				"          Price as string",
 				"     ),",
-				"     partitionFileNames:['Products_silver.csv'],",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
 				"          ProductID,",
 				"          Product,",
 				"          Category,",
 				"          Price",
-				"     ),",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     )) ~> sink1"
 			]
 		}
 	}

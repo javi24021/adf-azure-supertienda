@@ -1,5 +1,5 @@
 {
-	"name": "df_guardarArchivo",
+	"name": "df_silver_products",
 	"properties": {
 		"folder": {
 			"name": "SILVER"
@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ds_sql_silver_products",
+						"referenceName": "ds_sql_bronze_products",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "Products_csv",
+						"referenceName": "ds_sql_silver_products",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
@@ -31,10 +31,10 @@
 			],
 			"scriptLines": [
 				"source(output(",
-				"          ProductID as integer,",
+				"          ProductID as string,",
 				"          Product as string,",
 				"          Category as string,",
-				"          Price as integer",
+				"          Price as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -48,21 +48,25 @@
 				"cast1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
-				"          ProductID as string,",
+				"          ProductID as integer,",
 				"          Product as string,",
 				"          Category as string,",
-				"          Price as string",
+				"          Price as integer",
 				"     ),",
-				"     partitionFileNames:['Products_silver.csv'],",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
 				"          ProductID,",
 				"          Product,",
 				"          Category,",
 				"          Price",
-				"     ),",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     )) ~> sink1"
 			]
 		}
 	}
