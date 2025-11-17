@@ -1,18 +1,11 @@
 {
-	"name": "pipeline_bronze_products",
+	"name": "pipeline",
 	"properties": {
 		"activities": [
 			{
-				"name": "Data flow1",
+				"name": "DataFlow_Products",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "Script1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -34,9 +27,16 @@
 				}
 			},
 			{
-				"name": "Script1",
-				"type": "Script",
-				"dependsOn": [],
+				"name": "DataFlows_Customers",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DataFlow_Products",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -45,18 +45,78 @@
 					"secureInput": false
 				},
 				"userProperties": [],
-				"linkedServiceName": {
-					"referenceName": "ls_sql_supertienda_bronze",
-					"type": "LinkedServiceReference"
-				},
 				"typeProperties": {
-					"scripts": [
-						{
-							"type": "NonQuery",
-							"text": "\nIF OBJECT_ID('Products', 'U') IS NOT NULL\n    DROP TABLE Products;\n\nCREATE TABLE Products (\n    ProductID varchar(50),\n    Product varchar(50),\n    Category varchar(50),\n    Price decimal(10, 2)\n)"
-						}
-					],
-					"scriptBlockExecutionTimeout": "02:00:00"
+					"dataflow": {
+						"referenceName": "df_bronze_customers",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Dataflow_Orders",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DataFlows_Customers",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_bronze_orders",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Dataflow_Employes",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Dataflow_Orders",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_bronze_employees",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
 				}
 			}
 		],
